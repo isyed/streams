@@ -51,9 +51,13 @@ public final class AveragingAlgorithm<I extends SInput, O extends SOutput> imple
             if (atomicpw != null) {
                 oldpw = atomicpw.get();
             } else {
+                //Each product's stream is allocated a separate window over which different
+                //queries and aggregations for that instrument can be performed
                 oldpw = new PriceWindow(windowSize, price.getPrice());
                 AtomicReference<PriceWindow> apw = new AtomicReference<PriceWindow>();
                 apw.set(oldpw);
+                //TODO: Add logic for stream sampling (by product name), which could be turned on for
+                //holding very large windows in main memory if required. (This is an approximation technique)
                 atomicProductMap.put(price.getProdName(), apw);
                 return null;
             }
